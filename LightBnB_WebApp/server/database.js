@@ -6,7 +6,15 @@ const pool = new Pool({
   database: 'lightbnb',
   user: 'vagrant',
   password: '123',
-  host: 'localhost'
+  host: 'localhost',
+  port: 5432
+})
+
+pool.connect().then(() => {
+  console.log("We have connected to DB!");
+}).catch(e => {
+  console.log('Error!');
+  console.log(e.message);
 })
 
 /// Users
@@ -27,7 +35,15 @@ const getUserWithEmail = function(email) {
   //   }
   // }
   // return Promise.resolve(user);
-
+  return pool
+    .query(`SELECT * FROM users WHERE email = $1`, [email])
+    .then((result) => {
+      return Promise.resolve(result.rows[0]);
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.resolve(null);
+    });
 
 }
 exports.getUserWithEmail = getUserWithEmail;
@@ -38,7 +54,16 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  // return Promise.resolve(users[id]);
+  return pool
+    .query(`SELECT * FROM users WHERE id = $1`, [id])
+    .then((result) => {
+      return Promise.resolve(result.rows[0]);
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.resolve(null);
+    });
 }
 exports.getUserWithId = getUserWithId;
 
@@ -49,10 +74,11 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser =  function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  // const userId = Object.keys(users).length + 1;
+  // user.id = userId;
+  // users[userId] = user;
+  // return Promise.resolve(user);
+
 }
 exports.addUser = addUser;
 
@@ -85,7 +111,8 @@ const getAllProperties = (options, limit = 10) => {
   return pool
     .query(`SELECT * FROM properties LIMIT $1`, [limit])
     .then((result) => {
-      console.log(result.rows);
+      const limitedProperties = result.rows;
+      return Promise.resolve(limitedProperties);
     })
     .catch((err) => {
       console.log(err.message);
