@@ -174,7 +174,7 @@ const getAllProperties = (options, limit = 10) => {
   `;
 
   // 5
-  console.log(queryString, queryParams);
+  // console.log(queryString, queryParams);
 
   // 6
   return pool.query(queryString, queryParams)
@@ -190,9 +190,43 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  // const propertyId = Object.keys(properties).length + 1;
+  // property.id = propertyId;
+  // properties[propertyId] = property;
+  // return Promise.resolve(property);
+
+  let queryString = `INSERT INTO properties (`;
+
+  const keys = Object.keys(property);
+  const objectLength = keys.length;
+  for (let i = 0; i < objectLength; i++) {
+    if (i === objectLength - 1) {
+      queryString += `${keys[i]}) `;
+    } else {
+      queryString += `${keys[i]}, `;
+    }
+  }
+
+  queryString += `
+  VALUES (`;
+
+  const values = Object.values(property);
+  for (i = 0; i < objectLength; i++) {
+    if (i === objectLength - 1) {
+      queryString += `$${i + 1})`;
+    } else {
+      queryString += `$${i + 1}, `;
+    }
+  }
+
+  queryString += `
+  RETURNING *;`
+
+  // console.log(queryString, values);
+
+  return pool.query(queryString, values)
+  .then((res) => res.rows[0] || null)
+  .catch((err) => { console.log(err) });
+  
 }
 exports.addProperty = addProperty;
