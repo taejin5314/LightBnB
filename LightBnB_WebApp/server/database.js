@@ -3,12 +3,11 @@ const users = require('./json/users.json');
 const { Pool } = require('pg');
 
 const pool = new Pool({
+  database: 'lightbnb',
   user: 'vagrant',
   password: '123',
-  host: 'localhost',
-  database: 'lightbnb',
-  port: '3000'
-});
+  host: 'localhost'
+})
 
 /// Users
 
@@ -28,7 +27,7 @@ const getUserWithEmail = function(email) {
     }
   }
   return Promise.resolve(user);
-};
+}
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
@@ -38,7 +37,7 @@ exports.getUserWithEmail = getUserWithEmail;
  */
 const getUserWithId = function(id) {
   return Promise.resolve(users[id]);
-};
+}
 exports.getUserWithId = getUserWithId;
 
 
@@ -52,7 +51,7 @@ const addUser =  function(user) {
   user.id = userId;
   users[userId] = user;
   return Promise.resolve(user);
-};
+}
 exports.addUser = addUser;
 
 /// Reservations
@@ -64,7 +63,7 @@ exports.addUser = addUser;
  */
 const getAllReservations = function(guest_id, limit = 10) {
   return getAllProperties(null, 2);
-};
+}
 exports.getAllReservations = getAllReservations;
 
 /// Properties
@@ -98,5 +97,5 @@ const addProperty = function(property) {
   property.id = propertyId;
   properties[propertyId] = property;
   return Promise.resolve(property);
-};
+}
 exports.addProperty = addProperty;
