@@ -79,6 +79,17 @@ const addUser =  function(user) {
   // users[userId] = user;
   // return Promise.resolve(user);
 
+  console.log(user);
+  return pool
+    .query(`INSERT INTO users (name, email, password)
+            VALUES ($1, $2, $3)
+            RETURNING *;`, [user.name, user.email, user.password])
+    .then((result) => {
+      return Promise.resolve(result.rows[0]);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
 }
 exports.addUser = addUser;
 
