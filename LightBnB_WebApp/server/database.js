@@ -163,5 +163,5 @@ module.exports = {
     return pool.query(queryString, values)
     .then((res) => res.rows[0] || null)
     .catch((err) => { console.log(err) });
-  }
+  },
 }
